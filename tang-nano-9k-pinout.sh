@@ -172,7 +172,7 @@ fi
 
 echo ""
 echo "${BOLD}  +----------------------------------------------------------+${RST}"
-echo "${BOLD}  |          Tang Nano 9K - GW1NR-9C FPGA Pinout            |${RST}"
+echo "${BOLD}  |          Tang Nano 9K - GW1NR-9C FPGA Pinout             |${RST}"
 echo "${BOLD}  +----------------------------------------------------------+${RST}"
 echo ""
 
@@ -182,7 +182,7 @@ local n=${#LEFT_PIN[@]}
 if ((OPT_J5 && OPT_J6)); then
     echo "  ${DIM}Left header (J5)                    Right header (J6)${RST}"
     echo "  ${DIM}------------------------------------------------------------${RST}"
-    printf "  ${DIM}%-4s %-22s        %-22s %-4s${RST}\n" "Pin" "Signal" "Signal" "Pin"
+    printf "  ${DIM}%-4s %-20s        %-22s %-4s${RST}\n" "Pin" "Signal" "Signal" "Pin"
     echo "  ${DIM}------------------------------------------------------------${RST}"
     for ((i = 1; i <= n; i++)); do
         printf "  ${LEFT_COL[$i]}%2s${RST}   " "${LEFT_PIN[$i]}"
