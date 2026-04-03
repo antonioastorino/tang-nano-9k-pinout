@@ -23,8 +23,10 @@ for arg in "$@"; do
         OPT_EXPLICIT=1
         ;;
     *)
+        echo "--------------------------------------------------"
         echo "Unknown option: $arg" >&2
-        echo "Usage: zsh tangnano9k-pinout.zsh [--no-color] [--j5] [--j6]" >&2
+        echo "Usage:\n  \$ $(basename $0) [--no-color] [--j5] [--j6]" >&2
+        echo "--------------------------------------------------"
         exit 1
         ;;
     esac
@@ -140,11 +142,17 @@ RIGHT_COL=(
     $CGND $CGND $CPWR $CPWR $CGND
 )
 
-# -- onboard peripherals (always shown below the header) -----
+# -- LEDs and buttons ----------------------------------------
+typeset -a LB_LBL LB_VAL LB_COL
+LB_LBL=("LED1" "LED2" "LED3" "LED4" "LED5" "LED6" "BTN S1 (USER)" "BTN S2 (JTAG_SEL)")
+LB_VAL=("PIN10" "PIN11" "PIN13" "PIN14" "PIN15" "PIN16" "PIN3" "PIN4")
+LB_COL=($CLED $CLED $CLED $CLED $CLED $CLED $CBTN $CBTN)
+
+# -- onboard peripherals -------------------------------------
 typeset -a OB_LBL OB_VAL OB_COL
-OB_LBL=("CLK (27 MHz)" "LED1" "LED2" "LED3" "LED4" "LED5" "LED6" "BTN S1 (USER)" "BTN S2 (RESET)" "UART TX->FPGA" "UART RX<-FPGA" "JTAG TMS" "JTAG TCK" "JTAG TDI" "JTAG TDO")
-OB_VAL=("PIN52" "PIN10" "PIN11" "PIN13" "PIN14" "PIN15" "PIN16" "PIN88 (MODE0)" "PIN87 (MODE1)" "PIN18 (BL702)" "PIN17 (BL702)" "IOL11A" "IOL11B" "IOL12B" "IOL13A")
-OB_COL=($CCLK $CLED $CLED $CLED $CLED $CLED $CLED $CBTN $CBTN $CUART $CUART $CJTAG $CJTAG $CJTAG $CJTAG)
+OB_LBL=("CLK (27 MHz)" "UART TX->FPGA" "UART RX<-FPGA" "JTAG TMS" "JTAG TCK" "JTAG TDI" "JTAG TDO")
+OB_VAL=("PIN52" "PIN18 (BL702)" "PIN17 (BL702)" "IOL11A" "IOL11B" "IOL12B" "IOL13A")
+OB_COL=($CCLK $CUART $CUART $CJTAG $CJTAG $CJTAG $CJTAG)
 
 # -- legend entries ------------------------------------------
 # Each entry has: colour, label, source flags (j5=1, j6=2, onboard=4; combined with |)
@@ -172,7 +180,7 @@ fi
 
 echo ""
 echo "${BOLD}  +----------------------------------------------------------+${RST}"
-echo "${BOLD}  |          Tang Nano 9K - GW1NR-9C FPGA Pinout             |${RST}"
+echo "${BOLD}  |          Tang Nano 9K - GW1NR-9C FPGA Pinout            |${RST}"
 echo "${BOLD}  +----------------------------------------------------------+${RST}"
 echo ""
 
@@ -182,7 +190,7 @@ local n=${#LEFT_PIN[@]}
 if ((OPT_J5 && OPT_J6)); then
     echo "  ${DIM}Left header (J5)                    Right header (J6)${RST}"
     echo "  ${DIM}------------------------------------------------------------${RST}"
-    printf "  ${DIM}%-4s %-20s        %-22s %-4s${RST}\n" "Pin" "Signal" "Signal" "Pin"
+    printf "  ${DIM}%-4s %-22s        %-22s %-4s${RST}\n" "Pin" "Signal" "Signal" "Pin"
     echo "  ${DIM}------------------------------------------------------------${RST}"
     for ((i = 1; i <= n; i++)); do
         printf "  ${LEFT_COL[$i]}%2s${RST}   " "${LEFT_PIN[$i]}"
@@ -215,11 +223,20 @@ elif ((OPT_J6)); then
     done
 fi
 
-# -- onboard peripherals (default/full mode only) ------------
+# -- LEDs and buttons (default/full mode only) ---------------
 if ((show_onboard)); then
     echo ""
     echo "  ${DIM}------------------------------------------------------------${RST}"
-    echo "  ${BOLD}Onboard peripherals${RST}"
+    echo "  ${BOLD}LEDs and buttons${RST}"
+    echo "  ${DIM}------------------------------------------------------------${RST}"
+    local lb_n=${#LB_LBL[@]}
+    for ((i = 1; i <= lb_n; i++)); do
+        printf "  ${LB_COL[$i]}%-20s${RST}  %s\n" "${LB_LBL[$i]}" "${LB_VAL[$i]}"
+    done
+
+    echo ""
+    echo "  ${DIM}------------------------------------------------------------${RST}"
+    echo "  ${BOLD}Other onboard peripherals${RST}"
     echo "  ${DIM}------------------------------------------------------------${RST}"
     local ob_n=${#OB_LBL[@]}
     for ((i = 1; i <= ob_n; i++)); do
